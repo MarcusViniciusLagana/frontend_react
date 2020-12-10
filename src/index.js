@@ -33,6 +33,65 @@ function Board (props) {
     );
 }
 
+function Fact (props) {
+    let fact;
+
+    switch (props.value) {
+        case 1:
+            fact = ''
+            break;
+        default:
+            fact = 'Did you kown that tic-tac-toe is called "Jogo da Velha" in Brazil?' +
+            ' Something that could be translated as "The Game of the Old Woman"'
+            break;
+    }
+
+    return (
+        <div className="fact">
+            {fact}
+        </div>
+    );
+}
+
+function Image (props) {
+    const address = [
+        // Xs
+        'https://media.giphy.com/media/jTemXLGfONHenS1icE/source.gif',
+        'https://media.giphy.com/media/133R3yNyjDea0U/source.gif',
+        'https://media.giphy.com/media/l2SpUXr2q90X1Pqgw/source.gif',
+        'https://media.giphy.com/media/Pnfb50o1UuTagM3KMG/source.gif',
+        // Os
+        'https://media.giphy.com/media/26AHvcW0LBkohdWJa/giphy.gif',
+        'https://media.giphy.com/media/83eQIMgNvkiY/giphy.gif',
+        'https://media.giphy.com/media/ugyC0Q2BoCbYs/giphy.gif',
+        'https://media.giphy.com/media/3oz8xTwbLrC75weLeM/giphy.gif',
+        // Tie
+        'https://media.giphy.com/media/JTE9xUEh90wheAAnPN/giphy.gif',
+        'https://media.giphy.com/media/mJzJSSrhNJGEJ8GYrH/giphy.gif',
+        'https://media.giphy.com/media/RMk32NEpSgcIoljwwz/giphy.gif',
+        'https://media.giphy.com/media/l0HU8MLXSjDXkEUGk/giphy.gif'
+    ];
+    
+    let min = 0;
+    let max = address.length;
+    const numImages = max / 3;
+
+    if (props.winner === 'Draw') {
+        min = max - numImages;
+    } else if (props.winner === 'X' || (!props.winner && props.nextMove === 'X')) {
+        max = numImages;
+    } else {
+        min = numImages;
+        max -= numImages;
+    }
+
+    const image = Math.floor(Math.random() * (max - min) + min);
+
+    return (
+        <img alt="" src={address[image]}/>
+    );
+}
+
 class Game extends React.Component {
     // Initializing next move to ''
     // and all squares to null
@@ -89,23 +148,23 @@ class Game extends React.Component {
     render () {
         const winner = this.checkDrawWinner();
 
-        return (
-            <div>
-                <div className="title">
-                    Jogo da Velha or Tic-tac-toe
-                </div>
+        return (<div>
+            <div className="title">Jogo da Velha / Tic-tac-toe</div>
+            <div className="game-area">
                 <div className="game">
                     <Board squares={this.state.squares} click={(i) => this.squareClick(i)}/>
                     <div className="game-info">
-                        {!winner ? 'Next Move: ' + this.state.nextMove : 
-                        winner==='Draw' ? 'Deu Velha!' : 'Winner: ' + winner}
+                        {!winner ? 'Next Move:' : winner==='Draw' ? 'Deu Velha!' : 'Winner:'}
+                        <br/>
+                        <Image winner={winner} nextMove={this.state.nextMove}/>
                     </div>
                 </div>
                 <div className="restart">
-                    <button className="restartButton" onClick={() => this.restartGame()}>Restart Game</button>
+                    <button className="restart-button" onClick={() => this.restartGame()}>Restart Game</button>
                 </div>
+                <Fact/>
             </div>
-        );
+        </div>);
     }
 }
 
