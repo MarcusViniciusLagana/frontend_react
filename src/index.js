@@ -2,30 +2,44 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-ReactDOM.render(
-    <div className="game">
+function Square (props) {
+    return (<button className="square">{props.value}</button>);
+}
+
+function BoardRow (props) {
+    return (
+        <div className="board-row">
+            <Square value={props.value[0]}/>
+            <Square value={props.value[1]}/>
+            <Square value={props.value[2]}/>
+        </div>
+    );
+}
+
+function Board (props) {
+    return (
         <div className="game-board">
             <div>
-                <div className="board-row">
-                    <button className="square">X</button>
-                    <button className="square"></button>
-                    <button className="square"></button>
-                </div>
-                <div className="board-row">
-                    <button className="square"></button>
-                    <button className="square">X</button>
-                    <button className="square"></button>
-                </div>
-                <div className="board-row">
-                    <button className="square"></button>
-                    <button className="square"></button>
-                    <button className="square">X</button>
-                </div>
+                <BoardRow value={["X","",""]}/>
+                <BoardRow value={["","X",""]}/>
+                <BoardRow value={["","","X"]}/>
             </div>
         </div>
-        <div className="game-info">
-            Info
+    );
+}
+
+function Game (props) {
+    return (
+        <div className="game">
+            <Board/>
+            <div className="game-info">
+                Info
+            </div>
         </div>
-    </div>,
+    );
+}
+
+ReactDOM.render(
+    <Game/>,
     document.getElementById('root')
 );
