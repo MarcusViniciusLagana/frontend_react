@@ -2,8 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Square (props) {
-    return (<button className="square">{props.value}</button>);
+class Square extends React.Component {
+    // Initializing square state to ''
+    constructor(props) {
+        super(props);
+        this.state = {
+            value: ''
+        };
+    }
+    // Rendering the square button
+    render () {
+        return (
+            <button className="square" onClick={() => this.changeState()}>
+                {this.state.value}
+            </button>
+        );
+    }
+    // Changing 'O' to 'X'
+    changeState () {
+        if (this.state.value === 'O') this.setState({value: 'X'})
+        else this.setState ({value: 'O'})
+    }
 }
 
 function BoardRow (props) {
