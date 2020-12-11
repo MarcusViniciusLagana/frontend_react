@@ -34,21 +34,17 @@ function Board (props) {
 }
 
 function Fact (props) {
-    let fact;
-
-    switch (props.value) {
-        case 1:
-            fact = ''
-            break;
-        default:
-            fact = 'Did you kown that tic-tac-toe is called "Jogo da Velha" in Brazil?' +
-            ' Something that could be translated as "The Game of the Old Woman"'
-            break;
-    }
+    const fact = [
+        'Tic-tac-toe is called "Jogo da Velha" in Brazil, something that could be translated as "The Game of the Old Woman"',
+        'If the result is a tie, in Brazil, we call it "Velha" or "Old Woman" (free translation)',
+        'This game allows 91 distinct victories positions for "X", 44 for "O", and only 3 distinct draw positions',
+        'If played optimally by both players, the game always ends in a draw',
+        'In 1975, tic-tac-toe was used by MIT students to demonstrate the computational power of Tinkertoy elements.'
+    ];
 
     return (
         <div className="fact">
-            {fact}
+            {fact[Math.floor(Math.random() * fact.length)]}
         </div>
     );
 }
@@ -76,24 +72,19 @@ function Image (props) {
     let max = address.length;
     const numImages = max / 3;
 
-    if (props.winner === 'Draw') {
-        min = max - numImages;
-    } else if (props.winner === 'X' || (!props.winner && props.nextMove === 'X')) {
-        max = numImages;
-    } else {
+    if (props.nextMove === 'X') max = numImages;
+    else if (props.nextMove === 'O') {
         min = numImages;
         max -= numImages;
-    }
+    } else min = max - numImages;
 
     const image = Math.floor(Math.random() * (max - min) + min);
 
-    return (
-        <img alt="" src={address[image]}/>
-    );
+    return (<img alt="" src={address[image]}/>);
 }
 
 class Game extends React.Component {
-    // Initializing next move to ''
+    // Initializing next move to 'X'
     // and all squares to null
     constructor(props) {
         super(props);
@@ -114,7 +105,7 @@ class Game extends React.Component {
         const squares = this.state.squares;
         let draw = true;
         let win = false;
-        let winner = '';
+        let winner = null;
     
         for (const [a, b, c] of this.props.lines) {
             const line = [squares[a], squares[b], squares[c]];
@@ -126,18 +117,17 @@ class Game extends React.Component {
             if (nX === 3 || nO === 3) {
                 win = true;
                 winner = nX === 3 ? 'X' : 'O';
+                break;
             }
         }
 
-        if (win) return winner;
-        if (draw) return 'Draw';
-        return null;
+        return [win || draw, winner];
     }
 
     squareClick(index) {
         const squares = this.state.squares;
 
-        if (squares[index] || this.checkDrawWinner()) return;
+        if (squares[index] || this.checkDrawWinner()[0]) return;
 
         const nextMove = this.state.nextMove === 'X' ? 'O' : 'X';
         squares[index] = this.state.nextMove;
@@ -146,7 +136,7 @@ class Game extends React.Component {
     }
 
     render () {
-        const winner = this.checkDrawWinner();
+        const [endGame, winner] = this.checkDrawWinner();
 
         return (<div>
             <div className="title">Jogo da Velha / Tic-tac-toe</div>
@@ -154,9 +144,9 @@ class Game extends React.Component {
                 <div className="game">
                     <Board squares={this.state.squares} click={(i) => this.squareClick(i)}/>
                     <div className="game-info">
-                        {!winner ? 'Next Move:' : winner==='Draw' ? 'Deu Velha!' : 'Winner:'}
+                        {endGame ? (winner ? 'Winner:' : 'Draw / Deu Velha!') : 'Next Move:' }
                         <br/>
-                        <Image winner={winner} nextMove={this.state.nextMove}/>
+                        <Image nextMove={endGame ? winner : this.state.nextMove}/>
                     </div>
                 </div>
                 <div className="restart">
