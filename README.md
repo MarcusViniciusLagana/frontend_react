@@ -6,3 +6,5 @@ This is the first time I am using JS, React and Node.
 
  The project is bsed in the Intro to React Tutorial, available on:
  https://reactjs.org/tutorial/tutorial.html
+ 
+ Access the prject build <a href="build">page</a>
