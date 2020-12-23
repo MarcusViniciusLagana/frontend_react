@@ -88,15 +88,26 @@ img {
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
-    text-align: center;
     width: calc(160px * var(--scale));
     box-shadow: 0 1px 6px rgba(32, 33, 36, .28);
 }
 
-.winner { border: calc(5px * var(--scale)) dashed cornflowerblue; }
-
 .square:focus {
     outline: none;
+}
+
+.winner { border: calc(5px * var(--scale)) dashed cornflowerblue; }
+
+.history button {
+    background: #FFFFFF;
+    border: 1px solid #999999;
+    padding: 0;
+    width: calc(116px * var(--scale));
+    height: calc(25px * var(--scale));
+    margin: 0;
+    margin-right: 4px;
+    font: inherit;
+    font-size: calc(12px * var(--scale));
 }
 
 .restart {

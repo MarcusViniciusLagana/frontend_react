@@ -33,9 +33,7 @@ function Board (props) {
 
     return (
         <div className="game-board">
-            <div>
-                {row}
-            </div>
+            {row}
         </div>
     );
 }
@@ -90,28 +88,41 @@ function Image (props) {
     return (<img className={props.className} alt="Giphy" src={address[image]}/>);
 }
 
+function History (props) {
+    return(
+        <button onClick={props.onClick}>
+            {props.move ? 'Go to move #' + props.move : 'Go to game start'}
+        </button>
+    );
+}
+
 class Game extends React.Component {
     // Initializing next move to 'X'
     // and all squares to null
     constructor(props) {
         super(props);
         this.state = {
-            nextMove: 'X',
-            squares: Array(9).fill(null),
-            winnerSquares: Array(9).fill(false)
+            history: [{
+                squares: Array(9).fill(null),
+                nextMove: 'X'
+            }],
+            move: 0
         };
     }
 
     restartGame() {
         this.setState({
-            nextMove: 'X',
-            squares: Array(9).fill(null),
-            winnerSquares: Array(9).fill(false)
+            history: [{
+                squares: Array(9).fill(null),
+                nextMove: 'X'
+            }],
+            move: 0
         });
     }
     
     checkDrawWinner() {
-        const squares = this.state.squares;
+        const history = this.state.history.slice(0, this.state.move + 1);
+        const squares = history[history.length - 1].squares;
         const winnerSquares = Array(9).fill(false);
         let draw = true;
         let win = false;
@@ -138,28 +149,42 @@ class Game extends React.Component {
     }
 
     squareClick(index) {
-        const squares = this.state.squares;
+        const move = this.state.move + 1;
+        let history = this.state.history.slice(0, move);
+        const squares = history[history.length - 1].squares.slice();
 
         if (squares[index] || this.checkDrawWinner()[0]) return;
 
-        const nextMove = this.state.nextMove === 'X' ? 'O' : 'X';
-        squares[index] = this.state.nextMove;
+        const nextMove = history[history.length - 1].nextMove === 'X' ? 'O' : 'X';
+        squares[index] = history[history.length - 1].nextMove;
 
-        this.setState({ nextMove, squares });
+        history = history.concat([{ squares, nextMove }]);
+
+        this.setState({ history, move });
+    }
+
+    jumpTo(move) {
+        this.setState({ move })
     }
 
     render () {
+        const history = this.state.history;
         const [endGame, winner, winnerSquares] = this.checkDrawWinner();
+        const historyOptions = history.map((step, move) => <History key={move.toString()} onClick={() => this.jumpTo(move)} move={move}/>);
 
         return (<>
             <div className="title">Jogo da Velha / Tic-tac-toe</div>
             <div className="game-area">
                 <div className="game">
-                    <Board squares={this.state.squares} click={i => this.squareClick(i)} winnerSquares={winnerSquares}/>
+                    <Board squares={history[this.state.move].squares} click={i => this.squareClick(i)} winnerSquares={winnerSquares}/>
                     <div className="game-info">
                         {endGame ? (winner ? 'Winner:' : 'Draw / Deu Velha!') : 'Next Move:' }
                         <br/>
-                        <Image className={endGame ? 'winner' : 'img'} nextMove={endGame ? winner : this.state.nextMove}/>
+                        <Image className={endGame && winner ? 'winner' : 'img'} nextMove={endGame ? winner : history[this.state.move].nextMove}/>
+                        <br/>
+                        <div className="history">
+                            {historyOptions}
+                        </div>
                     </div>
                 </div>
                 <div className="restart">
