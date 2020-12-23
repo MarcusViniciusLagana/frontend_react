@@ -3,31 +3,38 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square (props) {
+    let style = 'square';
+    if (props.winnerSquare) style += ' winner';
     // Rendering the square button
     return (
-        <button className="square" onClick={props.click}>
+        <button className={style} onClick={props.click}>
             {props.value}
         </button>
     );
 }
 
 function BoardRow (props) {
+    const squares = props.squares;
+    const item = squares.map((square, index) => 
+        <Square key={'square-' + (3 * props.idx + index).toString()} value={square} click={() => props.click(index)} winnerSquare={props.winnerSquares[index]}/>);
+
     return (
         <div className="board-row">
-            <Square value={props.value[0]} click={() => props.click(0)}/>
-            <Square value={props.value[1]} click={() => props.click(1)}/>
-            <Square value={props.value[2]} click={() => props.click(2)}/>
+            {item}
         </div>
     );
 }
 
 function Board (props) {
+    const squareRows = [props.squares.slice(0, 3), props.squares.slice(3, 6), props.squares.slice(6, 9)];
+    const winnerRows = [props.winnerSquares.slice(0, 3), props.winnerSquares.slice(3, 6), props.winnerSquares.slice(6, 9)];
+    const row = squareRows.map((squareRow, index) => 
+        <BoardRow key={'board-' + index.toString()} idx={index} squares={squareRow} click={i => props.click(3 * index + i)} winnerSquares={winnerRows[index]}/>);
+
     return (
         <div className="game-board">
             <div>
-                <BoardRow value={props.squares.slice(0,3)} click={(i) => props.click(i)}/>
-                <BoardRow value={props.squares.slice(3,6)} click={(i) => props.click(3 + i)}/>
-                <BoardRow value={props.squares.slice(6,9)} click={(i) => props.click(6 + i)}/>
+                {row}
             </div>
         </div>
     );
@@ -80,7 +87,7 @@ function Image (props) {
 
     const image = Math.floor(Math.random() * (max - min) + min);
 
-    return (<img alt="" src={address[image]}/>);
+    return (<img className={props.className} alt="Giphy" src={address[image]}/>);
 }
 
 class Game extends React.Component {
@@ -90,19 +97,22 @@ class Game extends React.Component {
         super(props);
         this.state = {
             nextMove: 'X',
-            squares: Array(9).fill(null)
+            squares: Array(9).fill(null),
+            winnerSquares: Array(9).fill(false)
         };
     }
 
     restartGame() {
         this.setState({
             nextMove: 'X',
-            squares: Array(9).fill(null)
+            squares: Array(9).fill(null),
+            winnerSquares: Array(9).fill(false)
         });
     }
     
     checkDrawWinner() {
         const squares = this.state.squares;
+        const winnerSquares = Array(9).fill(false);
         let draw = true;
         let win = false;
         let winner = null;
@@ -117,11 +127,14 @@ class Game extends React.Component {
             if (nX === 3 || nO === 3) {
                 win = true;
                 winner = nX === 3 ? 'X' : 'O';
+                winnerSquares[a] = true;
+                winnerSquares[b] = true;
+                winnerSquares[c] = true;
                 break;
             }
         }
 
-        return [win || draw, winner];
+        return [win || draw, winner, winnerSquares];
     }
 
     squareClick(index) {
@@ -136,17 +149,17 @@ class Game extends React.Component {
     }
 
     render () {
-        const [endGame, winner] = this.checkDrawWinner();
+        const [endGame, winner, winnerSquares] = this.checkDrawWinner();
 
-        return (<div>
+        return (<>
             <div className="title">Jogo da Velha / Tic-tac-toe</div>
             <div className="game-area">
                 <div className="game">
-                    <Board squares={this.state.squares} click={(i) => this.squareClick(i)}/>
+                    <Board squares={this.state.squares} click={i => this.squareClick(i)} winnerSquares={winnerSquares}/>
                     <div className="game-info">
                         {endGame ? (winner ? 'Winner:' : 'Draw / Deu Velha!') : 'Next Move:' }
                         <br/>
-                        <Image nextMove={endGame ? winner : this.state.nextMove}/>
+                        <Image className={endGame ? 'winner' : 'img'} nextMove={endGame ? winner : this.state.nextMove}/>
                     </div>
                 </div>
                 <div className="restart">
@@ -154,7 +167,7 @@ class Game extends React.Component {
                 </div>
                 <Fact/>
             </div>
-        </div>);
+        </>);
     }
 }
 
