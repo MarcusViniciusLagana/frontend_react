@@ -49,7 +49,7 @@ function Fact (props) {
 
     return (
         <div className="fact">
-            {fact[Math.floor(Math.random() * fact.length)]}
+            {'Fast fact: ' + fact[Math.floor(Math.random() * fact.length)]}
         </div>
     );
 }
@@ -102,6 +102,7 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            init: true,
             history: [{
                 squares: Array(9).fill(null),
                 nextMove: 'X'
@@ -112,6 +113,7 @@ class Game extends React.Component {
 
     restartGame() {
         this.setState({
+            init: false,
             history: [{
                 squares: Array(9).fill(null),
                 nextMove: 'X'
@@ -173,6 +175,7 @@ class Game extends React.Component {
         const historyOptions = history.map((step, move) => <History key={move.toString()} onClick={() => this.jumpTo(move)} move={move}/>);
 
         return (<>
+            <HomeScreen init={this.state.init} onClick={() => this.restartGame()}/>
             <div className="title">Jogo da Velha / Tic-tac-toe</div>
             <div className="game-area">
                 <div className="game">
@@ -194,6 +197,33 @@ class Game extends React.Component {
             </div>
         </>);
     }
+}
+
+function HomeScreen (props) {
+    let imgdivClass = 'init-img-div';
+    let btndivClass = 'init-btn-div';
+    let imgClass = 'initial-img';
+    let btnClass = 'restart-button';
+    let divClass = 'initial';
+    if (!props.init) {
+        imgdivClass += ' noPadding';
+        btndivClass += ' noPadding';
+        imgClass += ' trigger';
+        btnClass += ' trigger';
+        divClass += ' trigger';
+    }
+
+    return (
+        <div className={divClass}>
+            <div className={imgdivClass}>
+                <img className={imgClass} alt="Tic Tac Toe by Chameleon Design from the Noun Project" src="./TicTacToe.png"/>
+            </div>
+            * Tic Tac Toe icon by Chameleon Design from the Noun Project
+            <div className={btndivClass}>
+                <button className={btnClass} onClick={props.onClick}>START</button>
+            </div>
+        </div>
+    );
 }
 
 ReactDOM.render(
