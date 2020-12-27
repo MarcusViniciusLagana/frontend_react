@@ -55,37 +55,49 @@ function Fact (props) {
 }
 
 function Image (props) {
-    const address = [
-        // Xs
-        'https://media.giphy.com/media/jTemXLGfONHenS1icE/source.gif',
-        'https://media.giphy.com/media/133R3yNyjDea0U/source.gif',
-        'https://media.giphy.com/media/l2SpUXr2q90X1Pqgw/source.gif',
-        'https://media.giphy.com/media/Pnfb50o1UuTagM3KMG/source.gif',
-        // Os
-        'https://media.giphy.com/media/26AHvcW0LBkohdWJa/giphy.gif',
-        'https://media.giphy.com/media/83eQIMgNvkiY/giphy.gif',
-        'https://media.giphy.com/media/ugyC0Q2BoCbYs/giphy.gif',
-        'https://media.giphy.com/media/3oz8xTwbLrC75weLeM/giphy.gif',
-        // Tie
-        'https://media.giphy.com/media/JTE9xUEh90wheAAnPN/giphy.gif',
-        'https://media.giphy.com/media/mJzJSSrhNJGEJ8GYrH/giphy.gif',
-        'https://media.giphy.com/media/RMk32NEpSgcIoljwwz/giphy.gif',
-        'https://media.giphy.com/media/l0HU8MLXSjDXkEUGk/giphy.gif'
-    ];
+    let image = './img/';
+
+    //const address = [
+    //    // Xs
+    //    'https://media.giphy.com/media/jTemXLGfONHenS1icE/source.gif',
+    //    'https://media.giphy.com/media/133R3yNyjDea0U/source.gif',
+    //    'https://media.giphy.com/media/l2SpUXr2q90X1Pqgw/source.gif',
+    //    'https://media.giphy.com/media/Pnfb50o1UuTagM3KMG/source.gif',
+    //    // Os
+    //    'https://media.giphy.com/media/26AHvcW0LBkohdWJa/giphy.gif',
+    //    'https://media.giphy.com/media/83eQIMgNvkiY/giphy.gif',
+    //    'https://media.giphy.com/media/ugyC0Q2BoCbYs/giphy.gif',
+    //    'https://media.giphy.com/media/3oz8xTwbLrC75weLeM/giphy.gif',
+    //    // Tie
+    //    'https://media.giphy.com/media/JTE9xUEh90wheAAnPN/giphy.gif',
+    //    'https://media.giphy.com/media/mJzJSSrhNJGEJ8GYrH/giphy.gif',
+    //    'https://media.giphy.com/media/RMk32NEpSgcIoljwwz/giphy.gif',
+    //    'https://media.giphy.com/media/l0HU8MLXSjDXkEUGk/giphy.gif'
+    //];
     
-    let min = 0;
-    let max = address.length;
-    const numImages = max / 3;
+    //let min = 0;
+    //let max = address.length;
+    //const numImages = max / 3;
 
-    if (props.nextMove === 'X') max = numImages;
-    else if (props.nextMove === 'O') {
-        min = numImages;
-        max -= numImages;
-    } else min = max - numImages;
+    //if (props.nextMove === 'X') max = numImages;
+    //else if (props.nextMove === 'O') {
+    //    min = numImages;
+    //    max -= numImages;
+    //} else min = max - numImages;
 
-    const image = Math.floor(Math.random() * (max - min) + min);
+    if (props.winner) {
+        image += props.winner + '-W.webp';
+    } else {
+        if (props.nextMove) {
+            image += props.nextMove + '-' + Math.floor(Math.random() * 3) + '.webp';
+        } else {
+            image += 'V-' + Math.floor(Math.random() * 4) + '.webp';
+        }
+    }
 
-    return (<img className={props.className} alt="Giphy" src={address[image]}/>);
+    //const image = Math.floor(Math.random() * (max - min) + min);
+
+    return (<img className={props.className} alt="Giphy" src={image}/>);
 }
 
 function History (props) {
@@ -183,7 +195,7 @@ class Game extends React.Component {
                     <div className="game-info">
                         {endGame ? (winner ? 'Winner:' : 'Draw / Deu Velha!') : 'Next Move:' }
                         <br/>
-                        <Image className={endGame && winner ? 'winner' : 'img'} nextMove={endGame ? winner : history[this.state.move].nextMove}/>
+                        <Image className={endGame && winner ? 'winner' : 'img'} nextMove={endGame ? winner : history[this.state.move].nextMove} winner={winner}/>
                         <br/>
                         <div className="history">
                             {historyOptions}
