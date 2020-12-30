@@ -13,7 +13,8 @@
 }
 
 body {
-    font: calc(20px * var(--scale)) "Century Gothic", "Futura", sans-serif;
+    font-size: calc(20px * var(--scale));
+    font-family: "Century Gothic", "Futura", sans-serif;
     margin: calc(20px * var(--scale));
 }
 
